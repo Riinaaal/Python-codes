@@ -5,11 +5,11 @@ import random
 dices = []
 howMany = int(input("How many dice to roll? "))
 
-i = 0
-for i in range(howMany):
+
+for x in range(howMany):
     randomList = random.randint(1, 6)
     dices.append(randomList)
-    i = i + 1
+
 
 print("Sum of dices is ", sum(dices))
 
@@ -38,11 +38,9 @@ print(sorted_numberList[0:5])
 
 cities = []
 
-for i in range(5):
+for x in range(5):
     uInput = input("Enter city name: ")
     cities.append(uInput)
-
-    i = i + 1
 
 for citie in cities:
     print(citie)
