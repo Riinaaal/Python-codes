@@ -5,11 +5,9 @@ import random
 dices = []
 howMany = int(input("How many dice to roll? "))
 
-
 for x in range(howMany):
     randomList = random.randint(1, 6)
     dices.append(randomList)
-
 
 print("Sum of dices is ", sum(dices))
 
