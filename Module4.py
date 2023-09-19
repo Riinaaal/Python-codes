@@ -71,3 +71,21 @@ while i < 5:
 
 # Module 4 assignment 6
 
+import random
+
+N = int(input("How many random spots to generate?"))
+
+rounds = 0
+n = 0
+while rounds < N:
+    x = random.uniform(-1, 1)
+    y = random.uniform(-1, 1)
+
+    if ((x * x) + (y * y)) < 1:
+        n = n + 1
+
+    rounds = rounds + 1
+
+pi = 4 * n / N
+print(N, n)
+print(pi)
