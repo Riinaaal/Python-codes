@@ -31,6 +31,18 @@ print(sorted_numberList[0:5])
 
 # Module 5 assignment 3
 
+number = int(input("Enter number: "))
+
+fulfills = 0
+for x in range(number):
+    if x != 0 and number % x == 0 and x != number:
+        fulfills = fulfills + 1
+
+if fulfills == 1 and number != 1:
+    print("Its a prime number")
+else:
+    print("Its not a prime number")
+
 
 # Module 5 assignment 4
 
