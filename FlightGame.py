@@ -9,7 +9,7 @@ connection = mysql.connector.connect(
          autocommit=True)
 
 def get_airport(ICAO):
-    sql = f"SELECT name FROM airport WHERE ident = '{ICAO}' "
+    sql = f"SELECT ident, name, latitude_deg, longitude_deg FROM airport WHERE ident = '{ICAO}' "
     cursor = connection.cursor()
     cursor.execute(sql)
     result = cursor.fetchall()
