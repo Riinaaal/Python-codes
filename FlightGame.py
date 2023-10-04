@@ -8,7 +8,9 @@ connection = mysql.connector.connect(
          password='riinaaal12345',
          autocommit=True)
 
-def get_airport(ICAO):
+
+# BACKEND functions start here ----------------
+def get_airport_info(ICAO):
     sql = f"SELECT ident, name, latitude_deg, longitude_deg FROM airport WHERE ident = '{ICAO}' "
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -42,4 +44,39 @@ def create_player(name):
         cursor.execute(sql2, val)
         cursor.fetchall()
 
+    return
+
+def co2_spent(round):
+    sql = f"SELECT distance_km FROM distance WHERE record_id in (select max(record_id) from distance)"
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    initialDistance = cursor.fetchall()
+
+    sql2 = f"SELECT co2_change, distance_change FROM event INNER JOIN choice on choice.event_occurred = event.id WHERE choice.id = round"
+    cursor = connection.cursor()
+    cursor.execute(sql2)
+    eventEffect = cursor.fetchall()
+    co2_change = 0
+    distance_change = 0
+    for row in eventEffect:
+        co2_change = row[0]
+        distance_change = row[1]
+
+    finalDistance = (initialDistance * distance_change)
+
+    sql3 = f"SELECT co2_emission_per_km from airplane INNER JOIN choice on choice.planetype = airplane.type WHERE choice.id = round "
+    cursor = connection.cursor()
+    cursor.execute(sql3)
+    emissionRates = cursor.fetchall()
+    emissionRate = 0
+    for row in emissionRates:
+        emissionRate = row[0]
+
+    finalCO2 = (finalDistance * emissionRate) * co2_change
+
+    sql4 = f"INSERT INTO choice(co2_spent) VALUES (%s)"
+    val = [finalCO2]
+    cursor = connection.cursor()
+    cursor.execute(sql4,val)
+    cursor.fetchall()
     return
