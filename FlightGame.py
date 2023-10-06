@@ -47,6 +47,7 @@ def create_player(name):
     return
 
 def co2_spent(round):
+    # Get distance from distance table
     sql = f"SELECT distance_km FROM distance WHERE record_id in (select max(record_id) from distance)"
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -56,6 +57,7 @@ def co2_spent(round):
         initialDistance = row[0]
 
 
+    # Get how event effects distance and co2
     sql2 = f"SELECT co2_change, distance_change FROM event INNER JOIN choice on choice.event_occurred = event.id WHERE choice.id = {round}"
     cursor = connection.cursor()
     cursor.execute(sql2)
@@ -65,9 +67,12 @@ def co2_spent(round):
     for row in eventEffect:
         co2_change = row[0]
         distance_change = row[1]
+        if distance_change == None:
+            distance_change = 1
 
-    finalDistance = (initialDistance * distance_change)
+    finalDistance = initialDistance * distance_change
 
+    #Find out plane type to calculate emissions
     sql3 = f"SELECT co2_emission_per_km from airplane INNER JOIN choice on choice.plane_type = airplane.type WHERE choice.id = {round} "
     cursor = connection.cursor()
     cursor.execute(sql3)
@@ -76,11 +81,15 @@ def co2_spent(round):
     for row in emissionRates:
         emissionRate = row[0]
 
-    finalCO2 = (finalDistance * emissionRate) * co2_change
+    print(emissionRates)
 
-    sql4 = f"INSERT INTO choice(co2_spent) VALUES (%s)"
+    finalCO2 = (finalDistance * emissionRate) * co2_change
+    print(finalCO2)
+
+    #Update final result of co2_spent to choice table
+    sql4 = f"UPDATE choice SET co2_spent =  %s WHERE choice.id = {round}"
     val = [finalCO2]
     cursor = connection.cursor()
-    cursor.execute(sql4,val)
+    cursor.execute(sql4, (val))
     cursor.fetchall()
     return
