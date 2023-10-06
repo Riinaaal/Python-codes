@@ -68,11 +68,12 @@ def co2_spent(round):
         co2_change = row[0]
         distance_change = row[1]
         if distance_change == None:
-            distance_change = 1
+            distance_change = 0
 
-    finalDistance = initialDistance * distance_change
+    finalDistance = initialDistance * distance_change + initialDistance
 
-    #Find out plane type to calculate emissions
+
+    # Find out plane type to calculate emissions
     sql3 = f"SELECT co2_emission_per_km from airplane INNER JOIN choice on choice.plane_type = airplane.type WHERE choice.id = {round} "
     cursor = connection.cursor()
     cursor.execute(sql3)
@@ -82,7 +83,7 @@ def co2_spent(round):
         emissionRate = row[0]
 
 
-    finalCO2 = (finalDistance * emissionRate) * co2_change
+    finalCO2 = (finalDistance * emissionRate * co2_change) + (finalDistance * emissionRate)
 
 
     #Update final result of co2_spent to choice table
