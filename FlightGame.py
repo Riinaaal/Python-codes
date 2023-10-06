@@ -52,7 +52,7 @@ def co2_spent(round):
     cursor.execute(sql)
     initialDistance = cursor.fetchall()
 
-    sql2 = f"SELECT co2_change, distance_change FROM event INNER JOIN choice on choice.event_occurred = event.id WHERE choice.id = round"
+    sql2 = f"SELECT co2_change, distance_change FROM event INNER JOIN choice on choice.event_occurred = event.id WHERE choice.id = {round}"
     cursor = connection.cursor()
     cursor.execute(sql2)
     eventEffect = cursor.fetchall()
@@ -64,7 +64,7 @@ def co2_spent(round):
 
     finalDistance = (initialDistance * distance_change)
 
-    sql3 = f"SELECT co2_emission_per_km from airplane INNER JOIN choice on choice.planetype = airplane.type WHERE choice.id = round "
+    sql3 = f"SELECT co2_emission_per_km from airplane INNER JOIN choice on choice.plane_type = airplane.type WHERE choice.id = {round} "
     cursor = connection.cursor()
     cursor.execute(sql3)
     emissionRates = cursor.fetchall()
