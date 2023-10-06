@@ -82,7 +82,6 @@ def co2_spent(round):
     for row in result:
         emissionRate = row[0]
 
-
     finalCO2 = (finalDistance * emissionRate * co2_change) + (finalDistance * emissionRate)
 
 
@@ -92,4 +91,27 @@ def co2_spent(round):
     cursor = connection.cursor()
     cursor.execute(sql4, (val))
     cursor.fetchall()
+
+
+    # Get current co2_consumed & total_travelled
+    sql5 = f"SELECT co2_consumed, total_travelled FROM player WHERE player.id = 1"
+    cursor = connection.cursor()
+    cursor.execute(sql5)
+    info = cursor.fetchall()
+    co2_original = 0
+    total_km_original = 0
+    for row in info:
+        co2_original = row[0]
+        total_km_original = row[1]
+
+    update_km = total_km_original + finalDistance
+    update_co2 = co2_original + finalCO2
+
+
+    # Update co2_cosnsumed and total_travelled
+    sql6 = f"UPDATE player SET co2_consumed = %s, total_travelled = %s WHERE player.id = 1"
+    cursor = connection.cursor()
+    cursor.execute(sql6, (update_co2, update_km))
+    cursor.fetchall()
+
     return
