@@ -50,7 +50,11 @@ def co2_spent(round):
     sql = f"SELECT distance_km FROM distance WHERE record_id in (select max(record_id) from distance)"
     cursor = connection.cursor()
     cursor.execute(sql)
-    initialDistance = cursor.fetchall()
+    total= cursor.fetchall()
+    initialDistance = 0
+    for row in total:
+        initialDistance = row[0]
+
 
     sql2 = f"SELECT co2_change, distance_change FROM event INNER JOIN choice on choice.event_occurred = event.id WHERE choice.id = {round}"
     cursor = connection.cursor()
