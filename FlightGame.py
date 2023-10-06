@@ -76,15 +76,14 @@ def co2_spent(round):
     sql3 = f"SELECT co2_emission_per_km from airplane INNER JOIN choice on choice.plane_type = airplane.type WHERE choice.id = {round} "
     cursor = connection.cursor()
     cursor.execute(sql3)
-    emissionRates = cursor.fetchall()
+    result = cursor.fetchall()
     emissionRate = 0
-    for row in emissionRates:
+    for row in result:
         emissionRate = row[0]
 
-    print(emissionRates)
 
     finalCO2 = (finalDistance * emissionRate) * co2_change
-    print(finalCO2)
+
 
     #Update final result of co2_spent to choice table
     sql4 = f"UPDATE choice SET co2_spent =  %s WHERE choice.id = {round}"
