@@ -18,6 +18,8 @@ def get_airport_info(ICAO):
     return result
 
 def create_player(name):
+
+    while True:
     sql = f"SELECT player_name FROM player WHERE player_name = '{name}' "
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -34,15 +36,7 @@ def create_player(name):
         cursor.fetchall()
 
     else:
-        name2 = input("Player already exists, enter new name: ")
-        co2_budget = 20000
-        co2_consumed = 0
-        total_travelled = 0
-        sql2 = f"INSERT INTO player(player_name,co2_budget,co2_consumed,total_travelled)VALUES (%s,%s,%s,%s)"
-        val = [name2, co2_budget, co2_consumed, total_travelled]
-        cursor = connection.cursor()
-        cursor.execute(sql2, val)
-        cursor.fetchall()
+        print("Player already exists, enter new name: ")
 
     return
 
