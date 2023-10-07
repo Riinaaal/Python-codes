@@ -28,7 +28,7 @@ def create_player():
         result = cursor.fetchall()
 
         if cursor.rowcount == 0:
-            co2_budget = 20000
+            co2_budget = 1000000
             co2_consumed = 0
             total_travelled = 0
             sql2 = f"INSERT INTO player(player_name,co2_budget,co2_consumed,total_travelled)VALUES (%s,%s,%s,%s)"
@@ -44,7 +44,7 @@ def create_player():
     return name
 
 
-def co2_spent(round):
+def co2_spent(round,name):
     # Get distance from distance table
     sql = f"SELECT distance_km FROM distance WHERE record_id in (select max(record_id) from distance)"
     cursor = connection.cursor()
@@ -92,7 +92,7 @@ def co2_spent(round):
 
 
     # Get current co2_consumed & total_travelled
-    sql5 = f"SELECT co2_consumed, total_travelled FROM player WHERE player.id = 1"
+    sql5 = f"SELECT co2_consumed, total_travelled FROM player WHERE player.screen_name = '{name}'"
     cursor = connection.cursor()
     cursor.execute(sql5)
     info = cursor.fetchall()
@@ -107,7 +107,7 @@ def co2_spent(round):
 
 
     # Update co2_cosnsumed and total_travelled
-    sql6 = f"UPDATE player SET co2_consumed = %s, total_travelled = %s WHERE player.id = 1"
+    sql6 = f"UPDATE player SET co2_consumed = %s, total_travelled = %s WHERE player.screen_name = '{name}'"
     cursor = connection.cursor()
     cursor.execute(sql6, (update_co2, update_km))
     cursor.fetchall()
