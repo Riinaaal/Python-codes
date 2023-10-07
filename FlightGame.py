@@ -41,7 +41,7 @@ def create_player():
         else:
             print("Player already exists!")
 
-    return
+    return name
 
 
 def co2_spent(round):
