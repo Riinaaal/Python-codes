@@ -17,28 +17,32 @@ def get_airport_info(ICAO):
     result = cursor.fetchall()
     return result
 
-def create_player(name):
+def create_player():
 
     while True:
-    sql = f"SELECT player_name FROM player WHERE player_name = '{name}' "
-    cursor = connection.cursor()
-    cursor.execute(sql)
-    result = cursor.fetchall()
+        name = input("Enter name: ")
 
-    if cursor.rowcount == 0:
-        co2_budget = 20000
-        co2_consumed = 0
-        total_travelled = 0
-        sql2 = f"INSERT INTO player(player_name,co2_budget,co2_consumed,total_travelled)VALUES (%s,%s,%s,%s)"
-        val = [name, co2_budget, co2_consumed, total_travelled]
+        sql = f"SELECT player_name FROM player WHERE player_name = '{name}' "
         cursor = connection.cursor()
-        cursor.execute(sql2, val)
-        cursor.fetchall()
+        cursor.execute(sql)
+        result = cursor.fetchall()
 
-    else:
-        print("Player already exists, enter new name: ")
+        if cursor.rowcount == 0:
+            co2_budget = 20000
+            co2_consumed = 0
+            total_travelled = 0
+            sql2 = f"INSERT INTO player(player_name,co2_budget,co2_consumed,total_travelled)VALUES (%s,%s,%s,%s)"
+            val = [name, co2_budget, co2_consumed, total_travelled]
+            cursor = connection.cursor()
+            cursor.execute(sql2, val)
+            cursor.fetchall()
+            break
+
+        else:
+            print("Player already exists!")
 
     return
+
 
 def co2_spent(round):
     # Get distance from distance table
