@@ -18,7 +18,6 @@ def get_airport_info(ICAO):
     return result
 
 def create_player():
-
     while True:
         name = input("Enter name: ")
 
@@ -44,7 +43,7 @@ def create_player():
     return name
 
 
-def co2_spent(round,name):
+def co2_spent(round, name):
     # Get distance from distance table
     sql = f"SELECT distance_km FROM distance WHERE record_id in (select max(record_id) from distance)"
     cursor = connection.cursor()
