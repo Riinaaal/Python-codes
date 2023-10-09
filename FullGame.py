@@ -188,24 +188,37 @@ def event_occurrence(turn,userid):
 
     #print(weights)
     pick = random.choices(events, weights = weights, k=1)
-    if row[1] == 'No event':
+
+    posneg = ''
+    co2 = 0
+    event = 0
+    sql = f"SELECT * from event WHERE info = '{pick[0]}'"
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    result2 = cursor.fetchall()
+    for row in result2:
+        posneg = row[2]
+        co2 = row[4]
+        event = row[0]
+
+    if pick[0] == 'No event':
         print("")
-        sql2 = f"UPDATE choice SET event_occurred = 0 WHERE turn = {turn} AND player_name = '{userid}'"
+        sql2 = f"UPDATE choice SET event_occurred = {event} WHERE turn = {turn} AND player_name = '{userid}'"
         cursor = connection.cursor()
         cursor.execute(sql2)
     else:
         print("\n\nyou've got a message from control tower!")
-        print(row[1])
+        print(pick[0])
         print("\nThe event will affect your flight :")
-        if row[2] == 'neg':
+        if posneg == 'neg':
             #if row[5] == 'NULL': ignoring the distance pe
-            print(f"Co2 consumption is {row[4] * 100}% increased!")
-            sql3 = f"UPDATE choice SET event_occurred = 1, co2_spent = co2_spent - co2_spent* {row[4]} WHERE turn = {turn} AND player_name = '{userid}'"
+            print(f"Co2 consumption is {co2 * 100}% increased!")
+            sql3 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
             cursor = connection.cursor()
             cursor.execute(sql3)
-        elif row[2] == 'pos':
-            print(f"Co2 consumption is {row[4] * 100}% decreased!")
-            sql4 = f"UPDATE choice SET event_occurred = 1, co2_spent = co2_spent - co2_spent* {row[4]} WHERE turn = {turn} AND player_name = '{userid}'"
+        elif posneg == 'pos':
+            print(f"Co2 consumption is {co2 * 100}% decreased!")
+            sql4 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
             cursor = connection.cursor()
             cursor.execute(sql4)
 
