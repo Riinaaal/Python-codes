@@ -102,8 +102,14 @@ def left_budget(userid):
     data = get_userdata(userid)
     return data['co2_budget'] - data['co2_consumed']
 
+counts = 3
+def counterforloop(counts):
+    counts -= 1
+    return counts
+
 def range_in (airplane_size, userid, turn):
     global airportCode, co2_emission, destination, chosenId, chosenDis, chosenCo2
+    global counts
 
     sql4 = f'''SELECT current_location FROM player WHERE player_name = "{userid}"'''
     cursor = connection.cursor()
@@ -140,18 +146,17 @@ def range_in (airplane_size, userid, turn):
                 index_counter += 1
     print("\nIf there isn't any destination shown, try another plane. You'll go back by hitting enter.")
     print("BUT REMEMBER, you can change the plane only 3 times!") # counting doesn't work at the moment: while loop <-> range_in() crash
-    counts = 3
     choice_input = input("\nWhere do you want to travel? Type the number or enter: \n")
-    while counts >0:
+    while counts > 0:
         if choice_input == "":
-            counts -= 1
+            counts = counterforloop(counts)
             print(f"attempts left : {counts}\n")
-            airplane = show_and_choose_airplane(userid)
-            range_in(airplane, userid, turn)
-            if counts == 0:
+            if counts > 0:
+                airplane = show_and_choose_airplane(userid)
+                range_in(airplane, userid, turn)
+            elif counts == 0:
                 print("Oh no, you can't change your plane anymore. This means your game is OVER!!")
                 game_over_and_save(userid)
-                break
         else:
             choice = int(choice_input)
             if 1 <= choice <= len(destination):
@@ -192,9 +197,9 @@ def event_occurrence(turn,userid):
     posneg = ''
     co2 = 0
     event = 0
-    sql2 = f"SELECT * from event WHERE info = '{pick[0]}'"
+    sql = f"SELECT * from event WHERE info = '{pick[0]}'"
     cursor = connection.cursor()
-    cursor.execute(sql2)
+    cursor.execute(sql)
     result2 = cursor.fetchall()
     for row in result2:
         posneg = row[2]
@@ -203,9 +208,9 @@ def event_occurrence(turn,userid):
 
     if pick[0] == 'No event':
         print("")
-        sql3 = f"UPDATE choice SET event_occurred = {event} WHERE turn = {turn} AND player_name = '{userid}'"
+        sql2 = f"UPDATE choice SET event_occurred = {event} WHERE turn = {turn} AND player_name = '{userid}'"
         cursor = connection.cursor()
-        cursor.execute(sql3)
+        cursor.execute(sql2)
     else:
         print("\n\nyou've got a message from control tower!")
         print(pick[0])
@@ -213,14 +218,14 @@ def event_occurrence(turn,userid):
         if posneg == 'neg':
             #if row[5] == 'NULL': ignoring the distance pe
             print(f"Co2 consumption is {co2 * 100}% increased!")
-            sql4 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent + co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
+            sql3 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
             cursor = connection.cursor()
-            cursor.execute(sql4)
+            cursor.execute(sql3)
         elif posneg == 'pos':
             print(f"Co2 consumption is {co2 * 100}% decreased!")
-            sql5 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
+            sql4 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
             cursor = connection.cursor()
-            cursor.execute(sql5)
+            cursor.execute(sql4)
 
 def update_turn_data(turn, userid):
     global dis, co2
@@ -255,6 +260,7 @@ def condition_checker(userid):
         return
     # weak logic. need to improve later on.
 def game_over_and_save(userid):
+    global name, score
     sql1 = f"SELECT player_name, total_travelled FROM player WHERE (co2_budget >= co2_consumed) AND (player_name = '{userid}')"
     #print(sql1)
     cursor = connection.cursor()
@@ -265,14 +271,13 @@ def game_over_and_save(userid):
             print(f"{row[0]}, You cannot fly with the remaining budget anywhere. GAME OVER!")
             name = row[0]
             score = row[1]
-
     save = input("Do you want to save your score in score board? (y/n): ")
     if save == 'y':
         sql2 = f"INSERT INTO scoreboard (player_name, score) VALUES (%s, %s)"
         val = [name, score]
         cursor = connection.cursor()
         cursor.execute(sql2, val)
-        print(f"your userid <{userid}> and your score <{score}> has been saved in the scoreboard.")
+        print(f"your userid <{name}> and your score <{score}> has been saved in the scoreboard.")
     return
 
 def show_scoreboard():
