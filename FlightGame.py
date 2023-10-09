@@ -3,7 +3,7 @@ import mysql.connector
 connection = mysql.connector.connect(
          host='127.0.0.1',
          port= 3306,
-         database='team_12',
+         database='team12',
          user='root',
          password='riinaaal12345',
          autocommit=True)
@@ -112,3 +112,54 @@ def co2_spent(round, name):
     cursor.fetchall()
 
     return
+
+# Fixed event function
+def event_occurrence(turn,userid):
+    import random
+    sql = f"SELECT * from event"
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    random.choice(result)
+    weights = []
+    events = []
+    for row in result:
+        #print(row)
+        events.append(row[1])
+        weights.append(row[3]*100)
+
+    #print(weights)
+    pick = random.choices(events, weights = weights, k=1)
+
+    posneg = ''
+    co2 = 0
+    event = 0
+    sql2 = f"SELECT * from event WHERE info = '{pick[0]}'"
+    cursor = connection.cursor()
+    cursor.execute(sql2)
+    result2 = cursor.fetchall()
+    for row in result2:
+        posneg = row[2]
+        co2 = row[4]
+        event = row[0]
+
+    if pick[0] == 'No event':
+        print("")
+        sql3 = f"UPDATE choice SET event_occurred = {event} WHERE turn = {turn} AND player_name = '{userid}'"
+        cursor = connection.cursor()
+        cursor.execute(sql3)
+    else:
+        print("\n\nyou've got a message from control tower!")
+        print(pick[0])
+        print("\nThe event will affect your flight :")
+        if posneg == 'neg':
+            #if row[5] == 'NULL': ignoring the distance pe
+            print(f"Co2 consumption is {co2 * 100}% increased!")
+            sql4 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent + co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
+            cursor = connection.cursor()
+            cursor.execute(sql4)
+        elif posneg == 'pos':
+            print(f"Co2 consumption is {co2 * 100}% decreased!")
+            sql5 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
+            cursor = connection.cursor()
+            cursor.execute(sql5)
