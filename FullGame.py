@@ -192,9 +192,9 @@ def event_occurrence(turn,userid):
     posneg = ''
     co2 = 0
     event = 0
-    sql = f"SELECT * from event WHERE info = '{pick[0]}'"
+    sql2 = f"SELECT * from event WHERE info = '{pick[0]}'"
     cursor = connection.cursor()
-    cursor.execute(sql)
+    cursor.execute(sql2)
     result2 = cursor.fetchall()
     for row in result2:
         posneg = row[2]
@@ -203,9 +203,9 @@ def event_occurrence(turn,userid):
 
     if pick[0] == 'No event':
         print("")
-        sql2 = f"UPDATE choice SET event_occurred = {event} WHERE turn = {turn} AND player_name = '{userid}'"
+        sql3 = f"UPDATE choice SET event_occurred = {event} WHERE turn = {turn} AND player_name = '{userid}'"
         cursor = connection.cursor()
-        cursor.execute(sql2)
+        cursor.execute(sql3)
     else:
         print("\n\nyou've got a message from control tower!")
         print(pick[0])
@@ -213,14 +213,14 @@ def event_occurrence(turn,userid):
         if posneg == 'neg':
             #if row[5] == 'NULL': ignoring the distance pe
             print(f"Co2 consumption is {co2 * 100}% increased!")
-            sql3 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
-            cursor = connection.cursor()
-            cursor.execute(sql3)
-        elif posneg == 'pos':
-            print(f"Co2 consumption is {co2 * 100}% decreased!")
-            sql4 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
+            sql4 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent + co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
             cursor = connection.cursor()
             cursor.execute(sql4)
+        elif posneg == 'pos':
+            print(f"Co2 consumption is {co2 * 100}% decreased!")
+            sql5 = f"UPDATE choice SET event_occurred = {event}, co2_spent = co2_spent - co2_spent* {co2} WHERE turn = {turn} AND player_name = '{userid}'"
+            cursor = connection.cursor()
+            cursor.execute(sql5)
 
 def update_turn_data(turn, userid):
     global dis, co2
