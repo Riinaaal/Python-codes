@@ -102,7 +102,7 @@ def left_budget(userid):
     data = get_userdata(userid)
     return data['co2_budget'] - data['co2_consumed']
 
-counts = 3
+counts = 2
 def counterforloop(counts):
     counts -= 1
     return counts
@@ -145,7 +145,7 @@ def range_in (airplane_size, userid, turn):
                 print(f"{index_counter}  |  {row[2]}    | {row[3]} | {row[1]} | {round(distance)} km | {round(co2_emission)}")
                 index_counter += 1
     print("\nIf there isn't any destination shown, try another plane. You'll go back by hitting enter.")
-    print("BUT REMEMBER, you can change the plane only 3 times!") # counting doesn't work at the moment: while loop <-> range_in() crash
+    print("BUT REMEMBER, you can change the plane only 2 times!") # counting doesn't work at the moment: while loop <-> range_in() crash
     choice_input = input("\nWhere do you want to travel? Type the number or enter: \n")
     while counts > 0:
         if choice_input == "":
@@ -154,9 +154,11 @@ def range_in (airplane_size, userid, turn):
             if counts > 0:
                 airplane = show_and_choose_airplane(userid)
                 range_in(airplane, userid, turn)
+                break
             elif counts == 0:
                 print("Oh no, you can't change your plane anymore. This means your game is OVER!!")
                 game_over_and_save(userid)
+                break
         else:
             choice = int(choice_input)
             if 1 <= choice <= len(destination):
@@ -258,7 +260,28 @@ def condition_checker(userid):
         return game_over_and_save(userid)
     else:
         return
-    # weak logic. need to improve later on.
+
+def end_display():
+
+    exit_process = True
+
+    while exit_process:
+        toScoreboard = input("Do you want to go check score board? (y/n) : ")
+        if toScoreboard == 'y':
+            show_scoreboard()
+            toFrontPage = input("By hitting enter, you'll go back to the front page.: ")
+            if toFrontPage == '':
+                front_display()
+            exit_process = False
+        elif toScoreboard == 'n':
+            toFrontPage = input("By hitting enter, you'll go back to the front page.: ")
+        if toFrontPage == '':
+            front_display()
+            exit_process = False
+        else:
+            print("Invalid answer. Try again.")
+
+
 def game_over_and_save(userid):
     global name, score
     sql1 = f"SELECT player_name, total_travelled FROM player WHERE (co2_budget >= co2_consumed) AND (player_name = '{userid}')"
@@ -278,7 +301,7 @@ def game_over_and_save(userid):
         cursor = connection.cursor()
         cursor.execute(sql2, val)
         print(f"your userid <{name}> and your score <{score}> has been saved in the scoreboard.")
-    return
+    return end_display()
 
 def show_scoreboard():
     sql = "SELECT * FROM scoreboard ORDER BY score DESC LIMIT 50"
@@ -336,8 +359,9 @@ def main_display(userid):
         cursor = connection.cursor()
         cursor.execute(sql2,val2)
         show_panel(userid)
-        condition_checker(userid)
+        #condition_checker(userid)
 
+        # game_over_and_save activated ==> go to end_display func.
 
         airplane = show_and_choose_airplane(userid)
         range_in(airplane,userid,turn)
@@ -347,7 +371,6 @@ def main_display(userid):
         print("\n\n Now your plane is landing....")
         update_turn_data(turn,userid)
 
-        #main_processing = False # now it's only played once.
 
     return
 
@@ -356,8 +379,8 @@ def front_display():
     initial = True
     while initial:
         print("----------------------")
-        print("|  NAME OF THE GAME  |")
-        print("|                    |")
+        print("| FLY ME,            |")
+        print("|      'TIL YOU CAN! |")
         print("----------------------")
         print("\n")
         print("1: START A NEW GAME")
@@ -374,13 +397,6 @@ def front_display():
             initial = False
 
             main_display(name)
-            #condition_checker(name)
-
-
-
-
-
-
 
         elif command == 2:
             print("<<TUTORIAL>>")
@@ -408,27 +424,8 @@ def front_display():
 
 
 
-
 #GAME STARTS HERE =====================
 front_display()
 
 
 
-
-exit_process = True
-
-while exit_process:
-    toScoreboard = input("Do you want to go check score board? (y/n) : ")
-    if toScoreboard == 'y':
-        show_scoreboard()
-        toFrontPage = input("By hitting enter, you'll go back to the front page.: ")
-        if toFrontPage == '':
-            front_display()
-        exit_process = False
-    elif toScoreboard == 'n':
-        toFrontPage = input("By hitting enter, you'll go back to the front page.: ")
-        if toFrontPage == '':
-            front_display()
-        exit_process = False
-    else:
-        print("Invalid answer. Try again.")
