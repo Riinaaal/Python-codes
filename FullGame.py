@@ -102,7 +102,7 @@ def left_budget(userid):
     data = get_userdata(userid)
     return data['co2_budget'] - data['co2_consumed']
 
-counts = 3
+counts = 4
 def counterforloop(counts):
     counts -= 1
     return counts
