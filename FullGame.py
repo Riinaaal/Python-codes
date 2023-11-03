@@ -273,13 +273,12 @@ def end_display():
             show_scoreboard()
             toFrontPage = input("By hitting enter, you'll go back to the front page.: ")
             if toFrontPage == '':
-                front_display()
+                return front_display()
             exit_process = False
         elif toScoreboard == 'n':
             toFrontPage = input("By hitting enter, you'll go back to the front page.: ")
         if toFrontPage == '':
-            front_display()
-            exit_process = False
+            return front_display()
         else:
             print("Invalid answer. Try again.")
 
