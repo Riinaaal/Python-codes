@@ -368,10 +368,13 @@ def main_display(userid):
         airplane = show_and_choose_airplane(userid)
         range_in(airplane,userid,turn)
 
-        print("\n\n You're flying up in the air...")
-        event_occurrence(turn,userid)
-        print("\n\n Now your plane is landing....")
-        update_turn_data(turn,userid)
+        if counts -1 >= 0:
+            print("\n\n You're flying up in the air...")
+            event_occurrence(turn,userid)
+            print("\n\n Now your plane is landing....")
+            update_turn_data(turn,userid)
+        else:
+            return
 
 
     return
