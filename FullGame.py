@@ -102,7 +102,7 @@ def left_budget(userid):
     data = get_userdata(userid)
     return data['co2_budget'] - data['co2_consumed']
 
-counts = 2
+counts = 3
 def counterforloop(counts):
     counts -= 1
     return counts
@@ -150,12 +150,13 @@ def range_in (airplane_size, userid, turn):
     while counts > 0:
         if choice_input == "":
             counts = counterforloop(counts)
-            print(f"attempts left : {counts}\n")
             if counts > 0:
+                print(f"attempts left : {counts - 1} \n")
                 airplane = show_and_choose_airplane(userid)
                 range_in(airplane, userid, turn)
                 break
             elif counts == 0:
+                print(f"attempts left : {counts} \n")
                 print("Oh no, you can't change your plane anymore. This means your game is OVER!!")
                 game_over_and_save(userid)
                 break
