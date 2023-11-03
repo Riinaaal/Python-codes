@@ -145,7 +145,7 @@ def range_in (airplane_size, userid, turn):
                 print(f"{index_counter}  |  {row[2]}    | {row[3]} | {row[1]} | {round(distance)} km | {round(co2_emission)}")
                 index_counter += 1
     print("\nIf there isn't any destination shown, try another plane. You'll go back by hitting enter.")
-    print("BUT REMEMBER, you can change the plane only 2 times!") # counting doesn't work at the moment: while loop <-> range_in() crash
+    print("BUT REMEMBER, you can change the plane only 3 times!") # counting doesn't work at the moment: while loop <-> range_in() crash
     choice_input = input("\nWhere do you want to travel? Type the number or enter: \n")
     while counts > 0:
         if choice_input == "":
