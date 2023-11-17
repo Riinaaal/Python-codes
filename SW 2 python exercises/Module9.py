@@ -1,4 +1,4 @@
-# Module 9 assignment 1 + 2 + 3 & 4
+# Module 9 assignment 1, 2, 3 & 4
 import random
 from beautifultable import BeautifulTable
 
