@@ -26,6 +26,7 @@ class Elevator:
         print(f"Elevator is on floor {self.location}")
         return
 
+
 class Building:
     def __init__(self, bottom, top, elevators):
         self.bottom_floor = bottom
@@ -40,10 +41,6 @@ class Building:
 
     def run_elevator(self, elevator, destination):
         Elevator.go_to_floor(self.elevators[elevator], destination)
-
-    def get_info(self):
-        for x in self.elevators:
-            print(x.location)
 
     def fire_alarm(self):
         for x in self.elevators:
